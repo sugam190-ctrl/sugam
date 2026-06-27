@@ -497,11 +497,11 @@
        CHECKOUT MODAL
     ============================================================ */
     .checkout-modal { max-width: 520px; max-height: 90vh; overflow-y: auto; }
-    .payment-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .payment-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
     .pay-tab {
-      flex: 1; min-width: 80px; padding: 12px 8px; border-radius: 12px;
+      padding: 12px 4px; border-radius: 12px;
       border: 1.5px solid var(--gray-200); background: var(--white);
-      font-size: 13px; font-weight: 600; color: var(--gray-500);
+      font-size: 12px; font-weight: 600; color: var(--gray-500);
       cursor: pointer; transition: var(--transition); text-align: center;
     }
     .pay-tab:hover { border-color: var(--blue-300); }
@@ -585,7 +585,7 @@
     .toast.show { transform: translateX(-50%) translateY(0); }
 
     /* ============================================================
-       RESPONSIVE
+       RESPONSIVE MEDIA QUERIES
     ============================================================ */
     @media (max-width: 1024px) {
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
@@ -601,14 +601,20 @@
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
       .hero-stats { gap: 24px; }
       .review-card, .about-stat-card { display: none; }
+      #loggedOutLinks button { padding: 8px 12px !important; font-size: 12px !important; }
+      #loggedInPortal { gap: 4px !important; }
+      #loggedInPortal span { display: none; }
     }
     @media (max-width: 480px) {
-      .services-grid { grid-template-columns: 1fr 1fr; }
+      .services-grid { grid-template-columns: 1fr; } /* CRITICAL: 1 Column fallback prevent narrow unreadable text layout squishing */
       .steps-grid { grid-template-columns: 1fr; }
       .hero-btns { flex-direction: column; }
       .btn { justify-content: center; }
       .footer-grid { grid-template-columns: 1fr; }
       .footer-bottom { flex-direction: column; text-align: center; }
+      .modal { padding: 24px 16px; margin: 12px; } /* Prevent elements breaking bounding box on small screen viewports */
+      .payment-tabs { grid-template-columns: repeat(2, 1fr); }
+      .card-num { font-size: 14px; letter-spacing: 0.1em; }
     }
   </style>
 </head>
@@ -1511,20 +1517,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
 
     try {
-      // Look inside the "orders" collection using your file's Firestore instance variable ('db')
       const orderDocRef = doc(db, "orders", orderId);
       const docSnap = await getDoc(orderDocRef);
 
       if (docSnap.exists()) {
         const orderData = docSnap.data();
         
-        // Handle initial fallback safely
         let currentStatus = orderData.orderStatus || "Order Received";
         if (currentStatus === "Order Processing") {
           currentStatus = "Order Received";
         }
 
-        // Create or update status feedback text element
         let statusNotice = document.getElementById('trackStatusText');
         if (!statusNotice) {
           statusNotice = document.createElement('p');
@@ -1537,7 +1540,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
         statusNotice.innerHTML = `📦 Current Status: <span style="color:var(--blue-500);">${currentStatus}</span>`;
 
-        // Administrative status stages matching your admin dropdown panel layout
         const orderStages = [
           "Order Received",
           "Being Picked Up",
@@ -1550,14 +1552,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
         const targetIndex = orderStages.indexOf(currentStatus);
         const visualSteps = document.querySelectorAll('.tracking-step, .step-item');
 
-        // Apply visual updates systematically to reflect active milestones
         visualSteps.forEach((stepElement, idx) => {
           stepElement.classList.remove('active', 'done');
           
           if (idx < targetIndex) {
-            stepElement.classList.add('done'); // Previous steps are marked as finished
+            stepElement.classList.add('done');
           } else if (idx === targetIndex) {
-            stepElement.classList.add('active'); // Highlight active timeline stage
+            stepElement.classList.add('active');
           }
         });
 
@@ -1567,11 +1568,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
       }
     } catch (error) {
       console.error("Technical Tracking Exception Details:", error);
-      // Outputs the exact technical console error to your UI toast notification alert
-      showToast(`⚠️ Firestore Rejection: ${error.message || error}`);
+      showToast("⚠️ Firestore Rejection: " + error.message);
     }
   };
-  
 </script>
 </body>
 </html>
