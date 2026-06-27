@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Magic Laundry &amp; Dry Cleaning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES
+    ============================================================ */
+    :root {
+      --blue-50:  #f0f8ff;
+      --blue-100: #ddf0ff;
+      --blue-200: #b3dffe;
+      --blue-300: #7dd3fc;
+      --blue-400: #38b6f0;
+      --blue-500: #0ea5e9;
+      --blue-600: #0284c7;
+      --blue-700: #0369a1;
+      --foam:     #e8f7ff;
+      --white:    #ffffff;
+      --gray-50:  #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-900: #111827;
+      --green:    #10b981;
+      --orange:   #f59e0b;
+      --red:      #ef4444;
+      --radius:   16px;
+      --radius-sm: 10px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow:    0 4px 16px rgba(14,165,233,.10), 0 2px 6px rgba(0,0,0,.06);
+      --shadow-lg: 0 16px 40px rgba(14,165,233,.14), 0 4px 12px rgba(0,0,0,.08);
+      --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --transition: .22s cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--white);
+      color: var(--gray-900);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+    input, textarea, select { font-family: inherit; }
+
+    /* ---- UTILITY ---- */
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 96px 0; }
+    .section-label {
+      display: inline-block; font-size: 12px; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--blue-500);
+      background: var(--blue-100); padding: 4px 14px; border-radius: 100px;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 5vw, 44px); font-weight: 700;
+      line-height: 1.18; color: var(--gray-900); margin-bottom: 16px;
+    }
+    .section-sub { font-size: 17px; color: var(--gray-500); max-width: 520px; line-height: 1.7; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 100px;
+      font-size: 15px; font-weight: 600; transition: var(--transition);
+    }
+    .btn-primary {
+      background: var(--blue-500); color: #fff;
+      box-shadow: 0 4px 16px rgba(14,165,233,.35);
+    }
+    .btn-primary:hover { background: var(--blue-600); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(14,165,233,.45); }
+    .btn-outline {
+      background: transparent; color: var(--blue-600);
+      border: 1.5px solid var(--blue-300);
+    }
+    .btn-outline:hover { background: var(--blue-50); }
+    .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 100px; }
+    .badge-green  { background: #d1fae5; color: #065f46; }
+    .badge-blue   { background: var(--blue-100); color: var(--blue-700); }
+    .badge-gray   { background: var(--gray-100); color: var(--gray-400); }
+
+    /* ---- BUBBLES ---- */
+    .bubbles-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .bubble {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.65), rgba(179,223,254,.25));
+      animation: floatBubble var(--dur,8s) ease-in-out infinite;
+      animation-delay: var(--delay,0s);
+    }
+    @keyframes floatBubble {
+      0%,100% { transform: translateY(0) scale(1); opacity: .45; }
+      50%      { transform: translateY(-28px) scale(1.05); opacity: .75; }
+    }
+
+    /* ---- SCROLL FADE ---- */
+    .fade-up { opacity: 0; transform: translateY(32px); transition: opacity .6s ease, transform .6s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+      padding: 0 24px; height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background var(--transition), box-shadow var(--transition);
+    }
+    #navbar.scrolled {
+      background: rgba(255,255,255,.9);
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 1px 0 rgba(0,0,0,.07);
+    }
+    .nav-logo {
+      font-family: var(--font-display); font-size: 22px; font-weight: 700;
+      color: var(--white); display: flex; align-items: center; gap: 8px;
+      transition: color var(--transition);
+    }
+    #navbar.scrolled .nav-logo { color: var(--blue-600); }
+    .logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--blue-400), var(--blue-600));
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: rgba(255,255,255,.85); transition: color var(--transition); }
+    .nav-links a:hover { color: #fff; }
+    #navbar.scrolled .nav-links a { color: var(--gray-600); }
+    #navbar.scrolled .nav-links a:hover { color: var(--blue-600); }
+    .nav-actions { display: flex; align-items: center; gap: 10px; position: relative; z-index: 10001; }
+    .cart-btn {
+      position: relative; width: 42px; height: 42px; border-radius: 100px;
+      background: rgba(255,255,255,.2); border: 1.5px solid rgba(255,255,255,.3);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--white); font-size: 18px; cursor: pointer; transition: var(--transition);
+    }
+    #navbar.scrolled .cart-btn { background: var(--blue-50); color: var(--blue-600); border-color: var(--blue-200); }
+    .cart-btn:hover { transform: scale(1.1); }
+    .cart-badge {
+      position: absolute; top: -5px; right: -5px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--red); color: #fff; font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--white); opacity: 0; transition: var(--transition);
+    }
+    .cart-badge.visible { opacity: 1; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; width: 28px; background: none; border: none; cursor: pointer; }
+    .hamburger span { display: block; height: 2px; border-radius: 2px; background: #fff; transition: var(--transition); }
+    #navbar.scrolled .hamburger span { background: var(--gray-700); }
+    .mobile-nav {
+      display: none; position: fixed; top: 68px; left: 0; right: 0;
+      background: rgba(255,255,255,.97); backdrop-filter: blur(20px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.1); z-index: 999;
+      padding: 20px 24px; flex-direction: column; gap: 4px;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a { font-size: 16px; font-weight: 500; color: var(--gray-700); padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+
+    /* ============================================================
+       MODALS SHARED
+    ============================================================ */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      backdrop-filter: blur(6px); z-index: 20000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity var(--transition);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--white); border-radius: 24px;
+      width: 100%; max-width: 440px; margin: 20px; padding: 40px 36px;
+      transform: translateY(20px); transition: transform var(--transition);
+      box-shadow: 0 32px 80px rgba(0,0,0,.18);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-header { text-align: center; margin-bottom: 28px; }
+    .modal-header h2 { font-family: var(--font-display); font-size: 28px; margin-bottom: 6px; }
+    .modal-header p { color: var(--gray-500); font-size: 14px; }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--gray-100); color: var(--gray-500);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; cursor: pointer; transition: var(--transition);
+    }
+    .modal-close:hover { background: var(--gray-200); }
+    .tab-row {
+      display: flex; background: var(--gray-100); border-radius: 100px;
+      padding: 4px; margin-bottom: 24px;
+    }
+    .tab-btn {
+      flex: 1; padding: 10px; border-radius: 100px;
+      font-size: 14px; font-weight: 600; background: none;
+      color: var(--gray-500); transition: var(--transition);
+    }
+    .tab-btn.active { background: var(--white); color: var(--blue-600); box-shadow: var(--shadow-sm); }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+    .form-group input {
+      width: 100%; padding: 12px 16px; border-radius: var(--radius-sm);
+      border: 1.5px solid var(--gray-200); font-size: 15px;
+      background: var(--gray-50); transition: border-color var(--transition);
+    }
+    .form-group input:focus { outline: none; border-color: var(--blue-400); background: var(--white); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* ============================================================
+       CART DRAWER
+    ============================================================ */
+    .drawer-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 14999;
+      opacity: 0; pointer-events: none; transition: opacity var(--transition);
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: all; }
+    .cart-drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 100%; max-width: 420px; background: var(--white);
+      z-index: 15000; box-shadow: -8px 0 40px rgba(0,0,0,.12);
+      transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+      display: flex; flex-direction: column;
+    }
+    .cart-drawer.open { transform: translateX(0); }
+    .cart-header {
+      padding: 24px; border-bottom: 1px solid var(--gray-100);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .cart-header h3 { font-size: 20px; font-weight: 700; }
+    .close-drawer {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--gray-100); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; transition: var(--transition);
+    }
+    .close-drawer:hover { background: var(--gray-200); }
+    .cart-items { flex: 1; overflow-y: auto; padding: 16px 24px; }
+    .cart-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 12px; color: var(--gray-400); }
+    .cart-empty .icon { font-size: 56px; }
+    .cart-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 0; border-bottom: 1px solid var(--gray-100);
+      animation: slideIn .2s ease;
+    }
+    @keyframes slideIn { from { opacity:0; transform:translateX(10px); } to { opacity:1; transform:translateX(0); } }
+    .cart-item-icon { font-size: 26px; width: 48px; height: 48px; background: var(--blue-50); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-size: 14px; font-weight: 600; }
+    .cart-item-price { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+    .qty-control { display: flex; align-items: center; gap: 8px; }
+    .qty-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--gray-100); font-size: 16px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: var(--transition);
+    }
+    .qty-btn:hover { background: var(--blue-100); color: var(--blue-600); }
+    .qty-num { font-size: 14px; font-weight: 700; min-width: 20px; text-align: center; }
+    .cart-footer { padding: 20px 24px; border-top: 1px solid var(--gray-100); }
+    .cart-total-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
+    .cart-total-row span:first-child { font-size: 16px; font-weight: 600; }
+    .cart-amount { color: var(--blue-600); font-size: 24px; font-weight: 700; }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #hero {
+      min-height: 100vh; position: relative;
+      background: linear-gradient(155deg, #0369a1 0%, #0ea5e9 50%, #7dd3fc 100%);
+      display: flex; align-items: center; overflow: hidden;
+    }
+    .hero-wave { position: absolute; bottom: 0; left: 0; right: 0; }
+    .hero-content { position: relative; z-index: 2; max-width: 620px; padding-top: 68px; }
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.18); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.3); border-radius: 100px;
+      padding: 6px 16px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,.9);
+      margin-bottom: 24px;
+    }
+    .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 7vw, 66px); font-weight: 700;
+      color: #fff; line-height: 1.1; margin-bottom: 20px;
+    }
+    .hero-title em { font-style: italic; }
+    .hero-sub { font-size: clamp(15px,2.5vw,18px); color: rgba(255,255,255,.8); margin-bottom: 36px; line-height: 1.75; max-width: 460px; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 60px; }
+    .hero-stats { display: flex; gap: 40px; flex-wrap: wrap; }
+    .stat-item { color: rgba(255,255,255,.9); }
+    .stat-num { font-family: var(--font-display); font-size: 30px; font-weight: 700; }
+    .stat-label { font-size: 12px; color: rgba(255,255,255,.62); margin-top: 2px; }
+
+    /* ============================================================
+       TRUST STRIP
+    ============================================================ */
+    #trust { background: var(--blue-600); padding: 20px 0; overflow: hidden; }
+    .trust-track { display: flex; gap: 48px; width: max-content; animation: scrollTrack 28s linear infinite; }
+    @keyframes scrollTrack { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .trust-item { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,.88); white-space: nowrap; }
+    .trust-item span { font-size: 18px; }
+
+    /* ============================================================
+       SERVICES
+    ============================================================ */
+    #services { background: var(--blue-50); }
+    .services-grid {
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px; 
+      margin-top: 48px;
+    }
+    .service-card {
+      background: var(--white); border-radius: 20px; padding: 24px;
+      border: 1.5px solid rgba(14,165,233,.08);
+      box-shadow: var(--shadow); position: relative; overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .service-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+    .service-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:4px;
+      background: linear-gradient(90deg, var(--blue-400), var(--blue-600));
+      opacity:0; transition: opacity var(--transition);
+    }
+    .service-card:hover::before { opacity:1; }
+    .service-icon-wrap { width:60px; height:60px; border-radius:16px; background:var(--blue-50); display:flex; align-items:center; justify-content:center; font-size:30px; margin-bottom:16px; }
+    .service-name { font-size:17px; font-weight:700; margin-bottom:6px; }
+    .service-desc { font-size:13px; color:var(--gray-500); margin-bottom:16px; line-height:1.65; }
+    .service-footer { display:flex; align-items:center; justify-content:space-between; }
+    .service-price { font-size:20px; font-weight:700; color:var(--blue-600); }
+    .service-price small { font-size:12px; color:var(--gray-400); font-weight:400; }
+    .add-cart-btn {
+      width:36px; height:36px; border-radius:50%;
+      background:var(--blue-500); color:#fff; font-size:22px; font-weight:400;
+      display:flex; align-items:center; justify-content:center;
+      transition: var(--transition); cursor:pointer;
+    }
+    .add-cart-btn:hover { background:var(--blue-700); transform:scale(1.14) rotate(12deg); }
+    .add-cart-btn.added { background:var(--green); animation:addPop .3s ease; }
+    @keyframes addPop { 0%{transform:scale(1)} 50%{transform:scale(1.35)} 100%{transform:scale(1)} }
+
+    /* ============================================================
+       HOW IT WORKS
+    ============================================================ */
+    #how { background: var(--white); }
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+      gap: 32px; margin-top: 56px;
+    }
+    .step-card {
+      background: var(--white); border-radius: 24px; padding: 40px 28px;
+      text-align: center; border: 1.5px solid var(--blue-100);
+      box-shadow: var(--shadow); position: relative;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .step-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .step-num {
+      position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--blue-500); color: #fff; font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(14,165,233,.38);
+    }
+    .step-icon { font-size: 50px; margin-bottom: 16px; display: block; }
+    .step-title { font-size: 19px; font-weight: 700; margin-bottom: 10px; }
+    .step-desc { font-size: 14px; color: var(--gray-500); line-height: 1.75; }
+
+    /* ============================================================
+       TRACKING
+    ============================================================ */
+    #tracking { background: var(--blue-50); }
+    .tracking-card {
+      max-width: 640px; margin: 48px auto 0;
+      background: var(--white); border-radius: 24px;
+      box-shadow: var(--shadow-lg); overflow: hidden;
+      border: 1.5px solid var(--blue-100);
+    }
+    .tracking-header {
+      background: linear-gradient(135deg, var(--blue-700), var(--blue-500));
+      padding: 24px 28px; color: #fff;
+    }
+    .tracking-header h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .tracking-header p { font-size: 13px; opacity: .78; }
+    .tracking-body { padding: 28px; }
+    .tracking-input-row { display: flex; gap: 10px; margin-bottom: 28px; }
+    .tracking-input-row input {
+      flex: 1; padding: 12px 16px; border-radius: 12px;
+      border: 1.5px solid var(--gray-200); font-size: 14px;
+      transition: border-color var(--transition);
+    }
+    .tracking-input-row input:focus { outline: none; border-color: var(--blue-400); }
+    .tracking-step {
+      display: flex; gap: 16px; margin-bottom: 22px;
+      align-items: flex-start; position: relative;
+    }
+    .tracking-step:not(:last-child)::before {
+      content:''; position:absolute; left:19px; top:42px;
+      width:2px; height:calc(100% + 2px); background:var(--gray-200);
+    }
+    .tracking-step.done::before { background: var(--blue-300); }
+    .t-dot {
+      width:40px; height:40px; border-radius:50%; flex-shrink:0;
+      background:var(--gray-100); display:flex; align-items:center; justify-content:center;
+      font-size:18px; position:relative; z-index:1; border:2px solid var(--gray-200);
+      transition: var(--transition);
+    }
+    .tracking-step.done .t-dot  { background:var(--blue-50); border-color:var(--blue-400); }
+    .tracking-step.active .t-dot {
+      background:var(--blue-500); border-color:var(--blue-600);
+      box-shadow: 0 0 0 4px rgba(14,165,233,.22);
+      animation: activePulse 2s infinite;
+    }
+    @keyframes activePulse { 0%,100%{box-shadow:0 0 0 4px rgba(14,165,233,.2)} 50%{box-shadow:0 0 0 10px rgba(14,165,233,.07)} }
+    .t-info { padding-top: 6px; flex: 1; }
+    .t-title { font-size: 15px; font-weight: 700; }
+    .t-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+    .tracking-step.active .t-title { color: var(--blue-600); }
+
+    /* ============================================================
+       ABOUT
+    ============================================================ */
+    #about { background: var(--white); }
+    .about-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+    .about-features { margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+    .about-feat {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: var(--blue-50); border-radius: 14px; padding: 18px;
+      transition: var(--transition);
+    }
+    .about-feat:hover { background: var(--white); box-shadow: var(--shadow); transform: translateX(4px); }
+    .feat-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+    .feat-title { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+    .feat-desc { font-size: 13px; color: var(--gray-500); }
+    .about-visual { position: relative; }
+    .about-img-placeholder {
+      width: 100%; aspect-ratio: 4/5; border-radius: 28px;
+      background: linear-gradient(135deg, var(--blue-100), var(--blue-200));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 80px;
+    }
+    .review-card {
+      position: absolute; bottom: -12px; left: -12px;
+      background: var(--white); border-radius: 16px; padding: 14px 18px;
+      box-shadow: var(--shadow-lg); min-width: 200px;
+    }
+    .review-stars { color: var(--orange); font-size: 14px; margin-bottom: 4px; }
+    .review-text { font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+    .review-by { font-size: 12px; color: var(--gray-400); }
+    .about-stat-card {
+      position: absolute; top: 28px; right: -16px;
+      background: var(--blue-600); color: #fff;
+      border-radius: 14px; padding: 14px 20px; box-shadow: var(--shadow-lg);
+    }
+    .about-stat-num { font-family: var(--font-display); font-size: 28px; font-weight: 700; }
+    .about-stat-label { font-size: 12px; opacity: .75; margin-top: 2px; }
+
+    /* ============================================================
+       CONTACT
+    ============================================================ */
+    #contact { background: var(--blue-50); }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1.5fr; gap: 64px; align-items: start; margin-top: 48px; }
+    .contact-cards { display: flex; flex-direction: column; gap: 14px; margin-top: 28px; }
+    .contact-card {
+      background: var(--white); border-radius: 16px; padding: 18px;
+      display: flex; gap: 14px; align-items: flex-start;
+      box-shadow: var(--shadow-sm); transition: var(--transition);
+    }
+    .contact-card:hover { box-shadow: var(--shadow); transform: translateX(4px); }
+    .c-icon { width:44px; height:44px; border-radius:12px; background:var(--blue-50); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+    .c-label { font-size:12px; color:var(--gray-400); font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-bottom:3px; }
+    .c-value { font-size:15px; font-weight:600; }
+    .contact-form-wrap {
+      background: var(--white); border-radius: 24px; padding: 36px;
+      box-shadow: var(--shadow); border: 1.5px solid var(--blue-100);
+    }
+    .contact-form-wrap h3 { font-size: 22px; font-weight: 700; margin-bottom: 24px; }
+    .form-group textarea {
+      width: 100%; padding: 12px 16px; border-radius: var(--radius-sm);
+      border: 1.5px solid var(--gray-200); font-size: 15px;
+      resize: vertical; min-height: 110px;
+      background: var(--gray-50); transition: border-color var(--transition);
+    }
+    .form-group textarea:focus { outline: none; border-color: var(--blue-400); background: var(--white); }
+
+    /* ============================================================
+       CHECKOUT MODAL
+    ============================================================ */
+    .checkout-modal { max-width: 520px; max-height: 90vh; overflow-y: auto; }
+    .payment-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .pay-tab {
+      flex: 1; min-width: 80px; padding: 12px 8px; border-radius: 12px;
+      border: 1.5px solid var(--gray-200); background: var(--white);
+      font-size: 13px; font-weight: 600; color: var(--gray-500);
+      cursor: pointer; transition: var(--transition); text-align: center;
+    }
+    .pay-tab:hover { border-color: var(--blue-300); }
+    .pay-tab.active { border-color: var(--blue-400); background: var(--blue-50); color: var(--blue-600); }
+    .pay-tab .pay-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+    .pay-panel { display: none; }
+    .pay-panel.active { display: block; }
+    .card-preview {
+      background: linear-gradient(135deg, var(--blue-700), var(--blue-400));
+      border-radius: 16px; padding: 24px; margin-bottom: 20px;
+      color: #fff; position: relative; overflow: hidden;
+    }
+    .card-preview::before {
+      content:''; position:absolute; top:-40px; right:-40px;
+      width:150px; height:150px; border-radius:50%;
+      background: rgba(255,255,255,.1);
+    }
+    .card-chip { width:40px; height:30px; background:rgba(255,255,255,.3); border-radius:6px; margin-bottom:20px; }
+    .card-num { font-size:17px; letter-spacing:.18em; margin-bottom:16px; font-family:'Courier New',monospace; }
+    .card-meta { display:flex; justify-content:space-between; font-size:12px; opacity:.8; font-family:'Courier New',monospace; }
+    .card-input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .digital-pay-btn {
+      width: 100%; padding: 16px; border-radius: 14px;
+      border: 1.5px solid var(--gray-200); background: var(--white);
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: var(--transition); margin-bottom: 12px; color: var(--gray-900);
+    }
+    .digital-pay-btn:hover { background: var(--gray-50); }
+    .digital-pay-btn.apple-btn { background: #000; color: #fff; border-color: #000; }
+    .digital-pay-btn.apple-btn:hover { background: #1a1a1a; }
+    .cod-box {
+      background: var(--gray-50); border-radius: 16px; padding: 28px;
+      text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .order-summary {
+      background: var(--blue-50); border-radius: 14px; padding: 16px; margin-bottom: 20px;
+    }
+    .order-summary h4 { font-size: 14px; font-weight: 700; color: var(--blue-700); margin-bottom: 12px; }
+    .order-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; color: var(--gray-700); }
+    .order-row.total { font-weight: 700; font-size: 15px; border-top: 1px solid var(--blue-200); padding-top: 10px; margin-top: 6px; }
+    .order-confirm { text-align: center; padding: 16px 0; }
+    .order-confirm .checkmark { width:72px; height:72px; border-radius:50%; background:#d1fae5; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-size:36px; }
+    .order-id { font-size: 13px; color: var(--gray-500); margin-top: 8px; }
+    .order-id strong { color: var(--blue-600); }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer { background: var(--gray-900); color: rgba(255,255,255,.65); padding: 60px 0 32px; }
+    .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand .logo { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .footer-brand p { font-size: 14px; line-height: 1.75; max-width: 260px; }
+    .footer-col h4 { color: #fff; font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 14px; color: rgba(255,255,255,.5); transition: color var(--transition); }
+    .footer-col ul li a:hover { color: var(--blue-400); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.08); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .footer-bottom p { font-size: 13px; }
+    .socials { display: flex; gap: 10px; margin-top: 20px; }
+    .social-btn {
+      width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:center;
+      font-size:14px; font-weight:700; cursor:pointer; transition:var(--transition); color:#fff;
+    }
+    .social-btn:hover { background: var(--blue-600); }
+
+    /* ============================================================
+       TOAST
+    ============================================================ */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--gray-900); color: #fff;
+      padding: 12px 22px; border-radius: 100px;
+      font-size: 14px; font-weight: 500; z-index: 30000;
+      display: flex; align-items: center; gap: 8px;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+      white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 1024px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .about-inner { grid-template-columns: 1fr; gap: 40px; }
+      .about-visual { max-width: 420px; margin: 0 auto; }
+    }
+    @media (max-width: 768px) {
+      .section { padding: 64px 0; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .contact-inner { grid-template-columns: 1fr; gap: 32px; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+      .hero-stats { gap: 24px; }
+      .review-card, .about-stat-card { display: none; }
+    }
+    @media (max-width: 480px) {
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .hero-btns { flex-direction: column; }
+      .btn { justify-content: center; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===================== NAVBAR ===================== -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <div class="logo-icon">🫧</div>
+    FreshWave
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#tracking">Track Order</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="cart-btn" onclick="toggleCart()">
+      🛒 <span id="cartBadge" class="cart-badge">0</span>
+    </button>
+    
+    <div id="loggedOutLinks">
+      <button class="btn btn-outline" onclick="openModal('authModal')" style="padding: 10px 20px; font-size: 13px;">Login / Sign Up</button>
+    </div>
+
+    <div id="loggedInPortal" style="display: none; align-items: center; gap: 8px;">
+      <span id="userGreeting" style="font-weight: 600; font-size: 13px; background: rgba(14,165,233,0.1); padding: 6px 12px; border-radius: 20px; color: #0284c7;"></span>
+      <button class="btn btn-primary" onclick="openModal('checkoutModal')" style="padding: 10px 18px; font-size: 13px; box-shadow: none;">Instant Checkout</button>
+      <button class="btn btn-outline" onclick="handleLogout()" style="padding: 10px 16px; font-size: 13px; border-color: transparent;">Logout</button>
+    </div>
+    
+    <button class="hamburger" onclick="toggleMobileNav()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#services" onclick="closeMobileNav()">Services &amp; Pricing</a>
+  <a href="#how" onclick="closeMobileNav()">How It Works</a>
+  <a href="#tracking" onclick="closeMobileNav()">Track Order</a>
+  <a href="#about" onclick="closeMobileNav()">About</a>
+  <a href="#contact" onclick="closeMobileNav()">Contact</a>
+  <a href="#" onclick="openModal('authModal');closeMobileNav()">Sign In / Register</a>
+</div>
+
+<!-- ===================== HERO ===================== -->
+<section id="hero">
+  <div class="bubbles-bg" aria-hidden="true">
+    <div class="bubble" style="width:120px;height:120px;top:8%;left:4%;--dur:9s;--delay:0s"></div>
+    <div class="bubble" style="width:55px;height:55px;top:28%;left:14%;--dur:7s;--delay:1s"></div>
+    <div class="bubble" style="width:190px;height:190px;top:55%;right:8%;--dur:11s;--delay:2s"></div>
+    <div class="bubble" style="width:75px;height:75px;top:72%;left:28%;--dur:8s;--delay:.5s"></div>
+    <div class="bubble" style="width:140px;height:140px;top:12%;right:22%;--dur:10s;--delay:1.5s"></div>
+    <div class="bubble" style="width:38px;height:38px;top:82%;right:38%;--dur:6s;--delay:3s"></div>
+    <div class="bubble" style="width:95px;height:95px;top:4%;right:4%;--dur:12s;--delay:.8s"></div>
+  </div>
+
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-pill">
+        <span class="hero-dot"></span>
+        Now available in your area
+      </div>
+      <h1 class="hero-title">Magic Laundry &amp;<br><em>Dry Cleaning</em></h1>
+      <p class="hero-sub">Fast, Affordable, and Reliable Service — delivered right to your door. Professional care for every fabric, every time.</p>
+     <div class="hero-btns">
+          <button id="heroActionBtn" class="btn btn-primary" onclick="openModal('authModal')">Book a Cleaning</button>
+          <a href="#services" class="btn btn-outline" style="color:#fff; border-color:rgba(255,255,255,.4);">View Services</a>
+        </div>
+      <div class="hero-stats">
+        <div class="stat-item"><div class="stat-num">12K+</div><div class="stat-label">Happy Customers</div></div>
+        <div class="stat-item"><div class="stat-num">4.9★</div><div class="stat-label">Average Rating</div></div>
+        <div class="stat-item"><div class="stat-num">24hr</div><div class="stat-label">Turnaround</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-wave">
+    <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="display:block">
+      <path d="M0,60 C360,100 720,20 1080,60 C1260,80 1380,48 1440,60 L1440,90 L0,90 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ===================== TRUST STRIP ===================== -->
+<section id="trust">
+  <div style="overflow:hidden">
+    <div class="trust-track">
+      <div class="trust-item"><span>🚚</span> Free Pickup &amp; Delivery</div>
+      <div class="trust-item"><span>🧴</span> Eco-Friendly Detergents</div>
+      <div class="trust-item"><span>⏱️</span> 24-Hour Express Service</div>
+      <div class="trust-item"><span>🔒</span> Secure Payment</div>
+      <div class="trust-item"><span>⭐</span> 4.9/5 Customer Rating</div>
+      <div class="trust-item"><span>👕</span> Expert Stain Removal</div>
+      <div class="trust-item"><span>♻️</span> Sustainable Packaging</div>
+      <div class="trust-item"><span>📱</span> Real-Time Tracking</div>
+      <div class="trust-item"><span>🚚</span> Free Pickup &amp; Delivery</div>
+      <div class="trust-item"><span>🧴</span> Eco-Friendly Detergents</div>
+      <div class="trust-item"><span>⏱️</span> 24-Hour Express Service</div>
+      <div class="trust-item"><span>🔒</span> Secure Payment</div>
+      <div class="trust-item"><span>⭐</span> 4.9/5 Customer Rating</div>
+      <div class="trust-item"><span>👕</span> Expert Stain Removal</div>
+      <div class="trust-item"><span>♻️</span> Sustainable Packaging</div>
+      <div class="trust-item"><span>📱</span> Real-Time Tracking</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SERVICES ===================== -->
+<section id="services" class="section">
+  <div class="container">
+    <div class="fade-up">
+      <span class="section-label">Services &amp; Pricing</span>
+      <h2 class="section-title">What We Clean</h2>
+      <p class="section-sub">Professional care for every garment. Tap <strong>+</strong> to add items to your cart and see your total instantly.</p>
+    </div>
+    <div class="services-grid" id="servicesGrid"></div>
+  </div>
+</section>
+
+<!-- ===================== HOW IT WORKS ===================== -->
+<section id="how" class="section" style="background:var(--blue-50)">
+  <div class="container">
+    <div class="fade-up" style="text-align:center">
+      <span class="section-label">Process</span>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-sub" style="margin:0 auto">Three simple steps to perfectly clean clothes.</p>
+    </div>
+    <div class="steps-grid fade-up">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <span class="step-icon">📅</span>
+        <div class="step-title">Schedule Pickup</div>
+        <p class="step-desc">Choose a convenient time and we'll come straight to your door. No waiting, no hassle.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <span class="step-icon">✨</span>
+        <div class="step-title">We Clean</div>
+        <p class="step-desc">Our experts use premium eco-friendly products to give your garments a fresh, professional finish.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <span class="step-icon">🚪</span>
+        <div class="step-title">Delivery at Your Door</div>
+        <p class="step-desc">Freshly cleaned and neatly packaged items delivered back within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TRACKING ===================== -->
+<section id="tracking" class="section">
+  <div class="container">
+    <div class="fade-up" style="text-align:center">
+      <span class="section-label">Track Order</span>
+      <h2 class="section-title">Live Order Tracking</h2>
+      <p class="section-sub" style="margin:0 auto">Enter your order ID to see real-time updates on your laundry.</p>
+    </div>
+    <div class="tracking-card fade-up">
+      <div class="tracking-header">
+        <h3>Track Your Order</h3>
+        <p>Enter your order number to check status</p>
+      </div>
+      <div class="tracking-body">
+        <div class="tracking-input-row">
+          <input type="text" placeholder="e.g. FW-20260318-123" id="trackInput" />
+          <button class="btn btn-primary" style="white-space:nowrap" onclick="window.trackOrderSystem()">Track →</button>
+        </div>
+        <div class="tracking-steps" id="trackingSteps">
+          <div class="tracking-step done">
+            <div class="t-dot">📦</div>
+            <div class="t-info"><div class="t-title">Order Received</div><div class="t-sub">Your order has been confirmed</div></div>
+            <span class="badge badge-green" style="margin-left:auto;flex-shrink:0">Done</span>
+          </div>
+          <div class="tracking-step done">
+            <div class="t-dot">🚚</div>
+            <div class="t-info"><div class="t-title">Picked Up</div><div class="t-sub">Items collected from your address</div></div>
+            <span class="badge badge-green" style="margin-left:auto;flex-shrink:0">Done</span>
+          </div>
+          <div class="tracking-step active">
+            <div class="t-dot" style="color:#fff">🧼</div>
+            <div class="t-info"><div class="t-title">Being Cleaned</div><div class="t-sub">Expert cleaning in progress</div></div>
+            <span class="badge badge-blue" style="margin-left:auto;flex-shrink:0">In Progress</span>
+          </div>
+          <div class="tracking-step">
+            <div class="t-dot">🏠</div>
+            <div class="t-info"><div class="t-title">Out for Delivery</div><div class="t-sub">On the way back to you</div></div>
+            <span class="badge badge-gray" style="margin-left:auto;flex-shrink:0">Pending</span>
+          </div>
+          <div class="tracking-step">
+            <div class="t-dot">✅</div>
+            <div class="t-info"><div class="t-title">Delivered</div><div class="t-sub">Enjoy your fresh laundry!</div></div>
+            <span class="badge badge-gray" style="margin-left:auto;flex-shrink:0">Pending</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===================== ABOUT ===================== -->
+<section id="about" class="section" style="background:var(--blue-50)">
+  <div class="container">
+    <div class="about-inner">
+      <div class="fade-up">
+        <span class="section-label">About Us</span>
+        <h2 class="section-title">We Care About Every Garment</h2>
+        <p class="section-sub">Magic was founded with a simple mission: make professional laundry care accessible, affordable, and sustainable for everyone — delivered to your door.</p>
+        <div class="about-features">
+          <div class="about-feat">
+            <div class="feat-icon">🌿</div>
+            <div><div class="feat-title">Eco-Friendly Products</div><div class="feat-desc">Certified biodegradable detergents, gentle on fabrics and the planet.</div></div>
+          </div>
+          <div class="about-feat">
+            <div class="feat-icon">⚡</div>
+            <div><div class="feat-title">Lightning Fast Turnaround</div><div class="feat-desc">Standard 24-hour service, or 6-hour express for urgent needs.</div></div>
+          </div>
+          <div class="about-feat">
+            <div class="feat-icon">🛡️</div>
+            <div><div class="feat-title">Fully Insured</div><div class="feat-desc">Every garment is insured from pickup to delivery. Always safe.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="about-visual fade-up">
+        <div class="about-img-placeholder">🧺</div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Best laundry service ever!"</div>
+          <div class="review-by">— Sarah K., Verified Customer</div>
+        </div>
+        <div class="about-stat-card">
+          <div class="about-stat-num">12K+</div>
+          <div class="about-stat-label">Happy customers</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section id="contact" class="section">
+  <div class="container">
+    <div class="fade-up">
+      <span class="section-label">Contact Us</span>
+      <h2 class="section-title">Get in Touch</h2>
+      <p class="section-sub">Have questions? We're here 7 days a week.</p>
+    </div>
+    <div class="contact-inner">
+      <div class="fade-up">
+        <div class="contact-cards">
+          <div class="contact-card"><div class="c-icon">📞</div><div><div class="c-label">Phone</div><div class="c-value">+977 9849305304</div></div></div>
+          <div class="contact-card"><div class="c-icon">📍</div><div><div class="c-label">Location</div><div class="c-value">Kavrepalanchok,Panauti-</div></div></div>
+          <div class="contact-card"><div class="c-icon">🕐</div><div><div class="c-label">Hours</div><div class="c-value">24/7</div></div></div>
+        </div>
+      </div>
+      <div class="contact-form-wrap fade-up">
+        <h3>Send Us a Message</h3>
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" placeholder="John" id="contactFirstName" /></div>
+          <div class="form-group"><label>Last Name</label><input type="text" placeholder="Doe" id="contactLastName" /></div>
+        </div>
+        <div class="form-group"><label>Email Address</label><input type="email" placeholder="john@email.com" id="contactEmail" /></div>
+        <div class="form-group"><label>Phone (optional)</label><input type="tel" placeholder="+1 (555) 000-0000" id="contactPhone" /></div>
+        <div class="form-group"><label>Message</label><textarea placeholder="Tell us how we can help..." id="contactMessage"></textarea></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitContact()">Send Message 📨</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">🫧 FreshWave</div>
+        <p>Professional laundry &amp; dry cleaning delivered to your door. Quality you can trust.</p>
+        <div class="socials">
+          <div class="social-btn">f</div>
+          <div class="social-btn">in</div>
+          <div class="social-btn">𝕏</div>
+          <div class="social-btn">▶</div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Washing</a></li>
+          <li><a href="#services">Dry Cleaning</a></li>
+          <li><a href="#services">Ironing</a></li>
+          <li><a href="#services">Express Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#tracking">Track Order</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2019 Magic. All rights reserved.</p>
+      <p>Made with 💙 for clean clothes everywhere</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== CART DRAWER ===================== -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h3>🛒 Your Cart</h3>
+    <button class="close-drawer" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total-row">
+      <span>Total</span>
+      <span class="cart-amount" id="cartTotal">$0.00</span>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="openCheckout()">Checkout →</button>
+  </div>
+</div>
+
+<!-- ===================== AUTH MODAL ===================== -->
+<div class="modal-overlay" id="authModal" onclick="handleAuthOverlayClick(event)">
+  <div class="modal" style="position:relative" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('authModal')">✕</button>
+    <div class="modal-header">
+      <h2>Welcome Back 👋</h2>
+      <p>Sign in to track orders &amp; manage pickups</p>
+    </div>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchAuthTab('signin',this)">Sign In</button>
+      <button class="tab-btn" onclick="switchAuthTab('signup',this)">Create Account</button>
+    </div>
+    <div id="signinPanel">
+      <div class="form-group"><label>Email</label><input type="email" placeholder="you@email.com" id="loginEmail" /></div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="••••••••" id="loginPassword" /></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="handleSignIn()">Sign In</button>
+      <p style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:14px"><a href="#" style="color:var(--blue-500)" onclick="handleResetPassword(); return false;">Forgot password?</a></p>
+    </div>
+    <div id="signupPanel" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" placeholder="John" id="signUpFirstName" /></div>
+        <div class="form-group"><label>Last Name</label><input type="text" placeholder="Doe" id="signUpLastName" /></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="you@email.com" id="signUpEmail" /></div>
+      <div class="form-group"><label>Phone</label><input type="tel" placeholder="+1 (555) 000" id="signUpPhone" /></div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="Min 8 characters" id="signUpPassword" /></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="handleSignUp()">Create Account →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CHECKOUT MODAL ===================== -->
+<div class="modal-overlay" id="checkoutModal" onclick="handleCheckoutOverlayClick(event)">
+  <div class="modal checkout-modal" style="position:relative" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('checkoutModal')">✕</button>
+    <div id="checkoutHeader" class="modal-header">
+      <h2>Checkout 🧾</h2>
+      <p>Select your preferred payment method</p>
+    </div>
+    <div id="checkoutContent">
+      <div class="order-summary" id="orderSummary"></div>
+      <div class="payment-tabs">
+        <div class="pay-tab active" onclick="switchPayTab('card',this)"><span class="pay-icon">💳</span>Card</div>
+        <div class="pay-tab" onclick="switchPayTab('esewa',this)"><span class="pay-icon">🟢</span>eSewa</div>
+        <div class="pay-tab" onclick="switchPayTab('khalti',this)"><span class="pay-icon">💜</span>Khalti</div>
+        <div class="pay-tab" onclick="switchPayTab('imepay',this)"><span class="pay-icon">🔴</span>IME Pay</div>
+        <div class="pay-tab" onclick="switchPayTab('connectips',this)"><span class="pay-icon">🔵</span>connectIPS</div>
+        <div class="pay-tab" onclick="switchPayTab('apple',this)"><span class="pay-icon">🍎</span>Apple Pay</div>
+        <div class="pay-tab" onclick="switchPayTab('google',this)"><span class="pay-icon">🤖</span>G Pay</div>
+        <div class="pay-tab" onclick="switchPayTab('cod',this)"><span class="pay-icon">💵</span>COD</div>
+      </div>
+      <!-- Card -->
+      <div class="pay-panel active" id="panel-card">
+        <div class="card-preview">
+          <div class="card-chip"></div>
+          <div class="card-num" id="cardNumDisplay">•••• •••• •••• ••••</div>
+          <div class="card-meta"><span id="cardNameDisplay">YOUR NAME</span><span id="cardExpDisplay">MM/YY</span></div>
+        </div>
+        <div class="form-group"><label>Cardholder Name</label><input type="text" placeholder="John Doe" oninput="document.getElementById('cardNameDisplay').textContent=this.value||'YOUR NAME'" /></div>
+        <div class="form-group"><label>Card Number</label><input type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNum(this)" /></div>
+        <div class="card-input-row">
+          <div class="form-group"><label>Expiry</label><input type="text" placeholder="MM/YY" maxlength="5" oninput="this.value=this.value.replace(/[^0-9\/]/g,'');document.getElementById('cardExpDisplay').textContent=this.value||'MM/YY'" /></div>
+          <div class="form-group"><label>CVV</label><input type="password" placeholder="•••" maxlength="4" /></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="placeOrder('Card')">Pay Now 🔒</button>
+      </div>
+      <!-- eSewa -->
+      <div class="pay-panel" id="panel-esewa">
+        <button class="digital-pay-btn" onclick="placeOrder('eSewa')" style="background:#41a124; color:#fff; border-color:#41a124;">
+          <span style="font-weight:900;">eSewa</span>
+        </button>
+        <p style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:8px">You will be redirected to secure eSewa portal checkout.</p>
+      </div>
+      <!-- Khalti -->
+      <div class="pay-panel" id="panel-khalti">
+        <button class="digital-pay-btn" onclick="placeOrder('Khalti')" style="background:#5c2d91; color:#fff; border-color:#5c2d91;">
+          <span style="font-weight:900;">Khalti Wallet</span>
+        </button>
+        <p style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:8px">Authenticate payment securely with your Khalti registered mobile.</p>
+      </div>
+      <!-- IME Pay -->
+      <div class="pay-panel" id="panel-imepay">
+        <button class="digital-pay-btn" onclick="placeOrder('IME Pay')" style="background:#ed1c24; color:#fff; border-color:#ed1c24;">
+          <span style="font-weight:900;">IME Pay</span>
+        </button>
+        <p style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:8px">Pay using your secure online IME Pay account credentials.</p>
+      </div>
+      <!-- ConnectIPS -->
+      <div class="pay-panel" id="panel-connectips">
+        <button class="digital-pay-btn" onclick="placeOrder('ConnectIPS')" style="background:#0054a6; color:#fff; border-color:#0054a6;">
+          <span style="font-weight:900;">connectIPS</span>
+        </button>
+        <p style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:8px">Direct bank transfer interface using linked connectIPS profiles.</p>
+      </div>
+      <!-- Apple Pay -->
+      <div class="pay-panel" id="panel-apple">
+        <button class="digital-pay-btn apple-btn" onclick="placeOrder('Apple Pay')"><span style="font-size:20px"></span> Pay</button>
+        <p style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:8px">Touch ID or Face ID will be used to authenticate.</p>
+      </div>
+      <!-- Google Pay -->
+      <div class="pay-panel" id="panel-google">
+        <button class="digital-pay-btn" onclick="placeOrder('Google Pay')" style="background:var(--white);border:1.5px solid var(--gray-200)">
+          <span style="font-size:20px;font-weight:900;background:linear-gradient(135deg,#4285F4,#34A853,#EA4335);-webkit-background-clip:text;-webkit-text-fill-color:transparent">G</span>
+          Google Pay
+        </button>
+        <p style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:8px">You'll confirm the payment via Google Pay.</p>
+      </div>
+      <!-- Cash on Delivery -->
+      <div class="pay-panel" id="panel-cod">
+        <div class="cod-box">
+          <div style="font-size:52px">💵</div>
+          <h3 style="font-size:20px;font-weight:700">Cash on Delivery</h3>
+          <p style="color:var(--gray-500);font-size:14px;max-width:280px">Pay in cash when your clean laundry arrives at your door. No card needed.</p>
+          <button class="btn btn-primary" style="margin-top:8px" onclick="processPortalOrder()">Place Order →</button>
+        </div>
+      </div>
+    </div>
+    <!-- Confirmation -->
+    <div class="order-confirm" id="orderConfirm" style="display:none">
+      <div class="checkmark">✅</div>
+      <h2 style="font-family:var(--font-display);font-size:26px;margin-bottom:8px">Order Placed!</h2>
+      <p style="color:var(--gray-500);margin-bottom:8px">We'll pick up your laundry within the hour.</p>
+      <p class="order-id">Order ID: <strong id="confirmedOrderId"></strong></p>
+      <div style="margin-top:20px;padding:16px;background:var(--blue-50);border-radius:14px">
+        <p style="font-size:13px;color:var(--blue-700)">🔔 You'll receive SMS &amp; email confirmation shortly.</p>
+      </div>
+      <button class="btn btn-outline" style="margin-top:24px" onclick="closeModal('checkoutModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ===================== JAVASCRIPT ===================== -->
+<script>
+/* ------ SERVICE DATA ------ */
+const SERVICES = [
+  { id: 'shirt',       name: 'Shirt / T-Shirt', icon: '👔', price: 60,   desc: 'Wash, press & hang. All fabrics welcome.' },
+  { id: 'pants',       name: 'Pants / Jeans',   icon: '👖', price: 70,   desc: 'Machine or dry clean. Pressed flat.' },
+  { id: 'suit_2pc',    name: 'Suit (2 Pcs)',    icon: '🤵', price: 350,  desc: 'Two-piece dry clean & steam press.' },
+  { id: 'suit_3pc',    name: 'Suit (3 Pcs)',    icon: '🧥', price: 450,  desc: 'Three-piece jacket, vest, and trousers clean.' },
+  { id: 'jacket_heavy',name: 'Heavy Jacket',    icon: '🧥', price: 200,  desc: 'Full dry clean & deodorize for winter coats.' },
+  { id: 'jacket_light',name: 'Light Jacket',    icon: '🧥', price: 150,  desc: 'Windbreakers, sweaters, and light layers.' },
+  { id: 'kurtha_suruwal',name: 'Kurtha Suruwal',icon: '👗', price: 120,  desc: 'Traditional wear delicate clean and press.' },
+  { id: 'lehenga',     name: 'Lehenga',         icon: '💃', price: 500,  desc: 'Heavy party wear delicate cycle treatment.' },
+  { id: 'saree_heavy', name: 'Saree (Heavy)',   icon: '🥻', price: 300,  desc: 'Embroidered silk or designer sarees.' },
+  { id: 'saree_plain', name: 'Saree (Plain)',   icon: '🥻', price: 150,  desc: 'Daily wear cotton or synthetic sarees.' },
+  { id: 'blanket_single',name: 'Blanket (Single)',icon: '🛏️', price: 250, desc: 'Single bed fiber or wool blanket wash.' },
+  { id: 'blanket_double',name: 'Blanket (Double)',icon: '🛏️', price: 350, desc: 'Double bed heavy blanket deep fluff wash.' }
+];
+
+/* ------ CART ------ */
+let cart = {};
+
+const getCount = () => Object.values(cart).reduce((s,i)=>s+i.qty,0);
+const getTotal = () => Object.values(cart).reduce((s,i)=>s+i.price*i.qty,0);
+
+/* ------ RENDER SERVICES ------ */
+function renderServices() {
+  const grid = document.getElementById('servicesGrid');
+  if(!grid) return;
+  grid.innerHTML = SERVICES.map(s => `
+    <div class="service-card fade-up">
+      <div class="service-icon-wrap">${s.icon}</div>
+      <div class="service-name">${s.name}</div>
+      <div class="service-desc">${s.desc}</div>
+      <div class="service-footer">
+        <div class="service-price">Rs. ${s.price.toFixed(2)} <small>/ item</small></div>
+        <button class="add-cart-btn" id="btn-${s.id}" onclick="addToCart('${s.id}')" title="Add to cart">+</button>
+      </div>
+    </div>
+  `).join('');
+  observeFadeUp();
+}
+
+/* ------ ADD TO CART ------ */
+function addToCart(id) {
+  const svc = SERVICES.find(s=>s.id===id);
+  if (!svc) return;
+  cart[id] ? cart[id].qty++ : (cart[id] = {...svc, qty:1});
+  const btn = document.getElementById('btn-'+id);
+  if (btn) { btn.classList.add('added'); btn.textContent='✓'; setTimeout(()=>{ btn.classList.remove('added'); btn.textContent='+'; },900); }
+  updateCartUI();
+  showToast(`${svc.icon} ${svc.name} added to cart!`);
+}
+
+/* ------ CHANGE QTY ------ */
+function changeQty(id, delta) {
+  if (!cart[id]) return;
+  cart[id].qty += delta;
+  if (cart[id].qty <= 0) delete cart[id];
+  updateCartUI();
+}
+
+/* ------ UPDATE CART UI ------ */
+function updateCartUI() {
+  const count = getCount();
+  const total = getTotal();
+  const badge = document.getElementById('cartBadge');
+  if(badge) {
+    badge.textContent = count;
+    badge.classList.toggle('visible', count > 0);
+  }
+
+  const itemsEl  = document.getElementById('cartItems');
+  const footerEl = document.getElementById('cartFooter');
+  const totalEl  = document.getElementById('cartTotal');
+
+  if(!itemsEl) return;
+
+  if (count === 0) {
+    itemsEl.innerHTML = `<div class="cart-empty"><div class="icon">🧺</div><p>Your cart is empty</p><a href="#services" class="btn btn-outline" onclick="toggleCart()" style="margin-top:8px">Browse Services</a></div>`;
+    if(footerEl) footerEl.style.display = 'none';
+    return;
+  }
+  if(footerEl) footerEl.style.display = 'block';
+  if(totalEl) totalEl.textContent = 'Rs. ' + total.toFixed(2);
+  itemsEl.innerHTML = Object.values(cart).map(item=>`
+    <div class="cart-item">
+      <div class="cart-item-icon">${item.icon}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">Rs. ${item.price.toFixed(2)} × ${item.qty} = Rs. ${(item.price*item.qty).toFixed(2)}</div>
+      </div>
+      <div class="qty-control">
+        <button class="qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
+        <span class="qty-num">${item.qty}</span>
+        <button class="qty-btn" onclick="changeQty('${item.id}',1)">+</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ------ CART DRAWER ------ */
+function toggleCart() {
+  document.getElementById('cartDrawer').classList.toggle('open');
+  document.getElementById('drawerOverlay').classList.toggle('open');
+}
+
+/* ------ MODAL ACTIONS ------ */
+window.openModal = function(id) {
+  document.getElementById(id).classList.add('open');
+};
+window.closeModal = function(id) {
+  document.getElementById(id).classList.remove('open');
+};
+window.handleAuthOverlayClick = function(e) {
+  if(e.target === document.getElementById('authModal')) closeModal('authModal');
+};
+window.handleCheckoutOverlayClick = function(e) {
+  if(e.target === document.getElementById('checkoutModal')) closeModal('checkoutModal');
+};
+
+function switchAuthTab(tab, btn) {
+  document.querySelectorAll('.tab-row .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('signinPanel').style.display = tab==='signin'?'block':'none';
+  document.getElementById('signupPanel').style.display = tab==='signup'?'block':'none';
+}
+
+/* ------ CHECKOUT ------ */
+function openCheckout() {
+  if (getCount()===0) { showToast('Your cart is empty!'); return; }
+  toggleCart();
+  buildOrderSummary();
+  document.getElementById('checkoutContent').style.display = 'block';
+  document.getElementById('orderConfirm').style.display = 'none';
+  document.getElementById('checkoutHeader').style.display = 'block';
+  openModal('checkoutModal');
+}
+
+function buildOrderSummary() {
+  const items = Object.values(cart);
+  const total = getTotal();
+  document.getElementById('orderSummary').innerHTML = `
+    <h4>Order Summary</h4>
+    ${items.map(i=>`<div class="order-row"><span>${i.icon} ${i.name} × ${i.qty}</span><span>Rs. ${(i.price*i.qty).toFixed(2)}</span></div>`).join('')}
+    <div class="order-row total"><span>Total</span><span>Rs. ${total.toFixed(2)}</span></div>
+  `;
+}
+
+function switchPayTab(tab, el) {
+  document.querySelectorAll('.payment-tabs .pay-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.pay-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+}
+
+/* ------ TRACKING ------ */
+function trackOrder() {
+  const val = document.getElementById('trackInput').value.trim();
+  if (!val) { showToast('Please enter an order ID'); return; }
+  showToast(`📦 Showing status for ${val}`);
+}
+
+/* ------ CONTACT ------ */
+function submitContact() { 
+  document.getElementById('contactFirstName').value = '';
+  document.getElementById('contactLastName').value = '';
+  document.getElementById('contactEmail').value = '';
+  document.getElementById('contactPhone').value = '';
+  document.getElementById('contactMessage').value = '';
+  showToast('✉️ Message sent! We\'ll reply within 2 hours.'); 
+}
+
+/* ------ CARD FORMAT ------ */
+function formatCardNum(el) {
+  let v = el.value.replace(/\D/g,'').substring(0,16);
+  el.value = v.match(/.{1,4}/g)?.join(' ')||'';
+  document.getElementById('cardNumDisplay').textContent = el.value || '•••• •••• •••• ••••';
+}
+
+/* ------ TOAST ------ */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = msg;
+  clearTimeout(toastTimer);
+  requestAnimationFrame(()=>t.classList.add('show'));
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+/* ------ NAVBAR SCROLL ------ */
+window.addEventListener('scroll', ()=>{
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* ------ MOBILE NAV ------ */
+function toggleMobileNav() { document.getElementById('mobileNav').classList.toggle('open'); }
+function closeMobileNav()  { document.getElementById('mobileNav').classList.remove('open'); }
+
+/* ------ SCROLL FADE ------ */
+function observeFadeUp() {
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up:not(.visible)').forEach(el=>io.observe(el));
+}
+
+/* ------ INIT ------ */
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderServices();
+  observeFadeUp();
+  updateCartUI();
+});
+</script>
+
+<!-- ===================== FIREBASE CONTROLLER MODULE ===================== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { 
+    getAuth, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword, 
+    sendEmailVerification, 
+    sendPasswordResetEmail,
+    setPersistence,
+    browserLocalPersistence,
+    onAuthStateChanged,
+    signOut 
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { 
+    getFirestore, 
+    doc, 
+    getDoc,
+    setDoc, 
+    collection,
+    addDoc,
+    serverTimestamp 
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAFL8ScHDXWPOGmDfEIe29WEUQAUaOiPwQ",
+    authDomain: "magic-c2bb9.firebaseapp.com",
+    projectId: "magic-c2bb9",
+    storageBucket: "magic-c2bb9.firebasestorage.app",
+    messagingSenderId: "822382509463",
+    appId: "1:822382509463:web:99ace0fd5f35a7faa658d2",
+    measurementId: "G-Z7N8563G68"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const loggedOutLinks = document.getElementById('loggedOutLinks');
+  const loggedInPortal = document.getElementById('loggedInPortal');
+  const userGreeting = document.getElementById('userGreeting');
+  const heroActionBtn = document.getElementById('heroActionBtn');
+
+  // Track user login state natively
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      if(loggedOutLinks) loggedOutLinks.style.display = 'none';
+      if(loggedInPortal) loggedInPortal.style.display = 'flex';
+      
+      const profileName = user.email.split('@')[0];
+      if(userGreeting) userGreeting.textContent = `👋 Hi, ${profileName}`;
+      
+      if (heroActionBtn) {
+        heroActionBtn.textContent = "Open Order Terminal";
+        heroActionBtn.setAttribute('onclick', "openModal('checkoutModal')");
+      }
+      closeModal('authModal');
+    } else {
+      if(loggedOutLinks) loggedOutLinks.style.display = 'block';
+      if(loggedInPortal) loggedInPortal.style.display = 'none';
+      
+      if (heroActionBtn) {
+        heroActionBtn.textContent = "Book a Cleaning";
+        heroActionBtn.setAttribute('onclick', "openModal('authModal')");
+      }
+    }
+  });
+
+  // User Sign Up Pipeline
+  window.handleSignUp = async () => {
+    const firstName = document.getElementById('signUpFirstName').value;
+    const lastName = document.getElementById('signUpLastName').value;
+    const email = document.getElementById('signUpEmail').value;
+    const phone = document.getElementById('signUpPhone').value;
+    const password = document.getElementById('signUpPassword').value;
+
+    if(!email || !password || password.length < 8) {
+      showToast("❌ Please enter a valid email and password (min 8 chars).");
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      await sendEmailVerification(user);
+      await setDoc(doc(db, "users", user.uid), {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: phone,
+        role: "customer",
+        createdAt: serverTimestamp()
+      });
+      showToast("🎉 Account created! Please check your email to verify.");
+      closeModal('authModal');
+    } catch (error) {
+      handleFirebaseErrors(error);
+    }
+  };
+
+  // User Sign In Pipeline
+  window.handleSignIn = async () => {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (!user.emailVerified) {
+        showToast("⚠️ Please verify your email before logging in.");
+        return;
+      }
+      showToast("👋 Welcome back!");
+      closeModal('authModal');
+    } catch (error) {
+      handleFirebaseErrors(error);
+    }
+  };
+
+  // Logout Pipeline
+  window.handleLogout = function() {
+    signOut(auth).then(() => {
+      showToast("Successfully logged out.");
+      closeModal('checkoutModal');
+    }).catch((err) => {
+      console.error("Logout failed:", err);
+    });
+  };
+
+  // Universal Order Placement Pipeline (Handles both Online Cards and Cash checkout options)
+  window.placeOrder = async function(method) {
+    const activeUser = auth.currentUser;
+    if (!activeUser) {
+      showToast("⚠️ Please sign in to place your order.");
+      closeModal('checkoutModal');
+      openModal('authModal');
+      return;
+    }
+
+    if (getCount() === 0) {
+      showToast("Your cart is empty!");
+      return;
+    }
+
+    const orderReceipt = {
+      customerUID: activeUser.uid,
+      customerEmail: activeUser.email,
+      paymentMethod: method,
+      orderedServices: Object.values(cart).map(item => ({
+        name: item.name,
+        quantity: item.qty,
+        pricePerItem: item.price,
+        calculatedSubtotal: (item.price * item.qty)
+      })),
+      totalInvoice: document.getElementById('cartTotal')?.textContent || "Rs. 0.00",
+      orderStatus: "Order Processing",
+      timestamp: new Date()
+    };
+
+    try {
+      const docResponse = await addDoc(collection(db, "orders"), orderReceipt);
+      document.getElementById('confirmedOrderId').textContent = docResponse.id;
+      document.getElementById('checkoutContent').style.display = 'none';
+      document.getElementById('checkoutHeader').style.display = 'none';
+      document.getElementById('orderConfirm').style.display = 'block';
+      
+      cart = {};
+      updateCartUI();
+      showToast(`Toasted! Order registered.`);
+    } catch (dbError) {
+      console.error("Firestore Transaction Blocked: ", dbError);
+      showToast("❌ Database connection error. Failed to save order.");
+    }
+  };
+
+  // Map the cash flow button directly over to our universal workspace process
+  window.processPortalOrder = () => window.placeOrder('Cash on Delivery');
+
+  // Password Reset Pipeline
+  window.handleResetPassword = async () => {
+    const email = prompt("Enter your email address to reset your password:");
+    if (!email) return;
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showToast("✉️ Password reset email sent!");
+    } catch (error) {
+      handleFirebaseErrors(error);
+    }
+  };
+
+  function handleFirebaseErrors(error) {
+    console.error(error);
+    if (error.code === 'auth/email-already-in-use') {
+      showToast("❌ An account with this email already exists.");
+    } else if (error.code === 'auth/invalid-credential') {
+      showToast("❌ Incorrect email or password.");
+    } else {
+      showToast("❌ Error: " + error.message);
+    }
+  }
+  // Universal Real-Time Database Order Tracking Engine
+  window.trackOrderSystem = async () => {
+    const trackInputEl = document.getElementById('trackInput');
+    if (!trackInputEl) return;
+
+    const orderId = trackInputEl.value.trim();
+    if (!orderId) {
+      showToast("⚠️ Please enter an Order ID first.");
+      return;
+    }
+
+    try {
+      // Look inside the "orders" collection using your file's Firestore instance variable ('db')
+      const orderDocRef = doc(db, "orders", orderId);
+      const docSnap = await getDoc(orderDocRef);
+
+      if (docSnap.exists()) {
+        const orderData = docSnap.data();
+        
+        // Handle initial fallback safely
+        let currentStatus = orderData.orderStatus || "Order Received";
+        if (currentStatus === "Order Processing") {
+          currentStatus = "Order Received";
+        }
+
+        // Create or update status feedback text element
+        let statusNotice = document.getElementById('trackStatusText');
+        if (!statusNotice) {
+          statusNotice = document.createElement('p');
+          statusNotice.id = 'trackStatusText';
+          statusNotice.style.textAlign = 'center';
+          statusNotice.style.fontWeight = 'bold';
+          statusNotice.style.marginTop = '20px';
+          statusNotice.style.fontSize = '16px';
+          trackInputEl.parentElement.appendChild(statusNotice);
+        }
+        statusNotice.innerHTML = `📦 Current Status: <span style="color:var(--blue-500);">${currentStatus}</span>`;
+
+        // Administrative status stages matching your admin dropdown panel layout
+        const orderStages = [
+          "Order Received",
+          "Being Picked Up",
+          "Being Cleaned / In Process",
+          "Ready for Delivery",
+          "Out for Delivery",
+          "Delivered"
+        ];
+
+        const targetIndex = orderStages.indexOf(currentStatus);
+        const visualSteps = document.querySelectorAll('.tracking-step, .step-item');
+
+        // Apply visual updates systematically to reflect active milestones
+        visualSteps.forEach((stepElement, idx) => {
+          stepElement.classList.remove('active', 'done');
+          
+          if (idx < targetIndex) {
+            stepElement.classList.add('done'); // Previous steps are marked as finished
+          } else if (idx === targetIndex) {
+            stepElement.classList.add('active'); // Highlight active timeline stage
+          }
+        });
+
+        showToast("🔍 Order status tracked successfully!");
+      } else {
+        showToast("❌ No order found matching that ID.");
+      }
+    } catch (error) {
+      console.error("Technical Tracking Exception Details:", error);
+      // Outputs the exact technical console error to your UI toast notification alert
+      showToast(`⚠️ Firestore Rejection: ${error.message || error}`);
+    }
+  };
+  
+</script>
+</body>
+</html>
